@@ -1,0 +1,48 @@
+@import 'normalize';
+@import 'boilerplate';
+
+// Variables
+$site-width: 960;
+
+// Colors
+// $color-blue: #60aff0;
+
+
+// Common
+html, body {
+    min-width: #{$site-width}px;
+}
+html {
+	background: url('../img/tile_bg.png') repeat center top;
+}
+body {
+	font-family: "Roboto", sans-serif;
+}
+.container {
+    margin: 0 auto;
+    width: #{$site-width}px;
+    position: relative;
+}
+
+
+// Main 
+.wrapper {
+	text-align: center;
+}
+
+.player{
+	display: inline-block;
+	width: 180px;
+	height: 160px;
+	padding: 20px 10px;
+	text-align: center;
+}
+.player-head {
+	width: 100px;
+	height: 100px;
+	margin: 0 auto;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.6)
+}
+.player-name {
+	margin-top: 10px;
+}
