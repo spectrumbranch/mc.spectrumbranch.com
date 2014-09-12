@@ -24,11 +24,28 @@
 		<div class="wrapper">
 			<div class="container">
 
-				<h1>Apocalypse Server Whitelist</h1>
+				<!-- h1>Apocalypse Server Whitelist</h1 -->
 
 				<div class="players">
-					<?php
 
+<?php 
+/*
+// create GD image resource from source image file
+$src = imagecreatefrompng('http://textures.minecraft.net/texture/13e81b9e19ab1ef17a90c0aa4e1085fc13cd47ced5a7a1a492803b3561e4a15b');
+
+
+$thumb = new Imagick('http://textures.minecraft.net/texture/13e81b9e19ab1ef17a90c0aa4e1085fc13cd47ced5a7a1a492803b3561e4a15b');
+$thumb->resizeImage(800, 800, Imagick::FILTER_LANCZOS, 0);
+$thumb->writeImage('img/mythumb.png');
+$thumb->destroy(); 
+*/
+?>
+
+	<img src="http://textures.minecraft.net/texture/cdf81d4ebd4f75b91a92c7d7971dc3dfe6f2b2c553787ef881db3b1361a32b5" alt=""/>
+	<img src="playerhead.php?uuid=9f87456a6e6c4eecadb77b7cc5e44065" alt=""/>
+
+
+					<?php 
 					$data = array("apikey" => $config['apikey']);
 					$data_string = json_encode($data);
 
@@ -46,6 +63,23 @@
 					$result = json_decode($curl_result);
 
 					foreach ($result->whitelist as $player) {
+						$uuid = str_replace('-','',$player->uuid);
+					?>
+
+					<div class="player">
+						<div class="player-head">
+							<!-- <img src="https://minotar.net/helm/<?=$player->name?>/100.png" alt=""/> -->
+							<img src="playerhead.php?uuid=<?=$uuid?>&size=100" alt=""/>
+						</div>
+						<div class="player-name">
+							<?=$player->name?><br/>
+							<span style="font-size:0.7em"><?=$uuid?></span>
+						</div>
+					</div>
+
+					<?php } ?>
+
+					<?php /* foreach ($result->whitelist as $player) {
 					?>
 
 					<div class="player">
@@ -53,11 +87,56 @@
 							<img src="https://minotar.net/helm/<?=$player->name?>/100.png" alt=""/>
 						</div>
 						<div class="player-name">
-							<?=$player->name?>
+							<?=$player->uuid?>
 						</div>
 					</div>
 
-					<?php } ?>
+					<?php } */ ?>
+
+
+	<?php /*
+	
+foreach ($uuids as $uuid) {
+	$imgdata = file_get_contents('https://sessionserver.mojang.com/session/minecraft/profile/' . $uuid);
+	$img = json_decode(base64_decode(json_decode($imgdata,true)['properties'][0]['value']),true)['textures']['SKIN']['url'];
+
+	// Add $img to some kind of cache-y list thing that I can call (if possible just add it to the whitelist API results :) )
+}
+
+
+			$imgdata = file_get_contents('https://sessionserver.mojang.com/session/minecraft/profile/9f87456a6e6c4eecadb77b7cc5e44065');
+			$img = json_decode(base64_decode(json_decode($imgdata,true)['properties'][0]['value']),true)['textures']['SKIN']['url'];
+
+
+			?>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="well">
+						<img style="image-rendering: -webkit-optimize-contrast;" src="<?php echo $img; ?>">
+						<h1>Harrydg</h1><br>
+						<h5>9f87456a6e6c4eecadb77b7cc5e44065</h5>
+						<pre><?php
+							print_r(json_decode($imgdata,true));
+						?></pre>
+						<pre><?php
+							print_r(json_decode(base64_decode(json_decode($imgdata,true)['properties'][0]['value']),true));
+						?></pre>
+						<pre><?php
+							print_r($value);
+						?></pre>
+					</div>
+				</div>
+			</div>
+			<?php */
+	?>
+
+
+
+
+
+
+
+
 				</div>
 
 			</div>
@@ -91,6 +170,9 @@
 				}
 			});
 */?>
+
+
+
 
 		</script>
 
