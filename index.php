@@ -24,7 +24,7 @@
 		<div class="wrapper">
 			<div class="container">
 
-				<!-- h1>Apocalypse Server Whitelist</h1 -->
+				<h1>Apocalypse Server Whitelist</h1>
 
 				<div class="players">
 
@@ -40,9 +40,6 @@ $thumb->writeImage('img/mythumb.png');
 $thumb->destroy(); 
 */
 ?>
-
-	<img src="http://textures.minecraft.net/texture/cdf81d4ebd4f75b91a92c7d7971dc3dfe6f2b2c553787ef881db3b1361a32b5" alt=""/>
-	<img src="playerhead.php?uuid=9f87456a6e6c4eecadb77b7cc5e44065" alt=""/>
 
 
 					<?php 
@@ -64,16 +61,35 @@ $thumb->destroy();
 
 					foreach ($result->whitelist as $player) {
 						$uuid = str_replace('-','',$player->uuid);
+
+						// Curl stuff
+						$data = array(
+							"apikey" => $config['apikey'],
+							"uuid" => $uuid
+						);
+						$data_string = json_encode($data);
+						$ch = curl_init('mc.spectrumbranch.com:8123/apoc_minecraft/skin.json');
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+						curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+							'Content-Type: application/json',
+							'Content-Length: ' . strlen($data_string))
+						);
+						$curl_result2 = curl_exec($ch);
+						$result2 = json_decode($curl_result2);
+
+						$texture = isset($result2->skin) ? urlencode($result2->skin) : 'none';
 					?>
 
 					<div class="player">
 						<div class="player-head">
 							<!-- <img src="https://minotar.net/helm/<?=$player->name?>/100.png" alt=""/> -->
-							<img src="playerhead.php?uuid=<?=$uuid?>&size=100" alt=""/>
+							<img src="playerhead.php?texture=<?=$texture?>&size=100" alt=""/>
 						</div>
 						<div class="player-name">
 							<?=$player->name?><br/>
-							<span style="font-size:0.7em"><?=$uuid?></span>
+							<!-- <span style="font-size:0.7em"><?=$uuid?></span> -->
 						</div>
 					</div>
 

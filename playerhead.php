@@ -1,32 +1,15 @@
 <?php
 	include('config.php');
-	$uuid = isset($_GET['uuid']) ? $_GET['uuid'] : '00000000-0000-0000-0000-000000000000';
+	$texture = isset($_GET['texture']) ? $_GET['texture'] : $_GET['texture'] ;
+	if ($texture == 'none')
+		$texture = 'img/char.png';
 	$size = isset($_GET['size']) ? $_GET['size'] : 64;
 
-	// Curl stuff
-	$data = array(
-		"apikey" => $config['apikey'],
-		"uuid" => $uuid
-	);
-	$data_string = json_encode($data);
-	$ch = curl_init('mc.spectrumbranch.com:8123/apoc_minecraft/skin.json');
-	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-		'Content-Type: application/json',
-		'Content-Length: ' . strlen($data_string))
-	);
-	$curl_result = curl_exec($ch);
-	$result = json_decode($curl_result);
-
-// var_dump($result);
-// die();
 	// Get params
 	header('Content-type: image/png');
 
 	// Grab original image
-	$image = imagecreatefrompng($result->skin);
+	$image = imagecreatefrompng($texture);
 
 	//get old width and height
 	$old_width = 64;
