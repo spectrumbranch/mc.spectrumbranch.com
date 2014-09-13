@@ -28,20 +28,6 @@
 
 				<div class="players">
 
-<?php 
-/*
-// create GD image resource from source image file
-$src = imagecreatefrompng('http://textures.minecraft.net/texture/13e81b9e19ab1ef17a90c0aa4e1085fc13cd47ced5a7a1a492803b3561e4a15b');
-
-
-$thumb = new Imagick('http://textures.minecraft.net/texture/13e81b9e19ab1ef17a90c0aa4e1085fc13cd47ced5a7a1a492803b3561e4a15b');
-$thumb->resizeImage(800, 800, Imagick::FILTER_LANCZOS, 0);
-$thumb->writeImage('img/mythumb.png');
-$thumb->destroy(); 
-*/
-?>
-
-
 					<?php 
 					$data = array("apikey" => $config['apikey']);
 					$data_string = json_encode($data);
@@ -54,15 +40,13 @@ $thumb->destroy();
 						'Content-Type: application/json',
 						'Content-Length: ' . strlen($data_string))
 					);
-					
 					$curl_result = curl_exec($ch);
-
 					$result = json_decode($curl_result);
 
+					// Loop through each player
 					foreach ($result->whitelist as $player) {
 						$uuid = str_replace('-','',$player->uuid);
 
-						// Curl stuff
 						$data = array(
 							"apikey" => $config['apikey'],
 							"uuid" => $uuid
@@ -83,75 +67,15 @@ $thumb->destroy();
 					?>
 
 					<div class="player">
-						<div class="player-head">
-							<!-- <img src="https://minotar.net/helm/<?=$player->name?>/100.png" alt=""/> -->
+						<div class="player-head-container">
 							<img src="playerhead.php?texture=<?=$texture?>&size=100" alt=""/>
 						</div>
 						<div class="player-name">
 							<?=$player->name?><br/>
-							<!-- <span style="font-size:0.7em"><?=$uuid?></span> -->
 						</div>
 					</div>
 
 					<?php } ?>
-
-					<?php /* foreach ($result->whitelist as $player) {
-					?>
-
-					<div class="player">
-						<div class="player-head">
-							<img src="https://minotar.net/helm/<?=$player->name?>/100.png" alt=""/>
-						</div>
-						<div class="player-name">
-							<?=$player->uuid?>
-						</div>
-					</div>
-
-					<?php } */ ?>
-
-
-	<?php /*
-	
-foreach ($uuids as $uuid) {
-	$imgdata = file_get_contents('https://sessionserver.mojang.com/session/minecraft/profile/' . $uuid);
-	$img = json_decode(base64_decode(json_decode($imgdata,true)['properties'][0]['value']),true)['textures']['SKIN']['url'];
-
-	// Add $img to some kind of cache-y list thing that I can call (if possible just add it to the whitelist API results :) )
-}
-
-
-			$imgdata = file_get_contents('https://sessionserver.mojang.com/session/minecraft/profile/9f87456a6e6c4eecadb77b7cc5e44065');
-			$img = json_decode(base64_decode(json_decode($imgdata,true)['properties'][0]['value']),true)['textures']['SKIN']['url'];
-
-
-			?>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="well">
-						<img style="image-rendering: -webkit-optimize-contrast;" src="<?php echo $img; ?>">
-						<h1>Harrydg</h1><br>
-						<h5>9f87456a6e6c4eecadb77b7cc5e44065</h5>
-						<pre><?php
-							print_r(json_decode($imgdata,true));
-						?></pre>
-						<pre><?php
-							print_r(json_decode(base64_decode(json_decode($imgdata,true)['properties'][0]['value']),true));
-						?></pre>
-						<pre><?php
-							print_r($value);
-						?></pre>
-					</div>
-				</div>
-			</div>
-			<?php */
-	?>
-
-
-
-
-
-
-
 
 				</div>
 
@@ -164,31 +88,19 @@ foreach ($uuids as $uuid) {
 
 		<script type="text/javascript">
 
-<?php /*
-			$.ajax({
-				url : "http://mc.spectrumbranch.com:8123/apoc_minecraft/whitelist.json",
-				type: "POST",
-				data : {apikey: "<?=$config['apikey']?>"},
-				success: function(data)
-				{
-					var content = '';
-					for (var i=0;i<data.whitelist.length;i++) {
-						content += '<div class="player">'
-								+ '	<div class="player-head">'
-								+ '		<img src="https://minotar.net/helm/' + data.whitelist[i].name + '/100.png" alt=""/>'
-								+ '	</div>'
-								+ '	<div class="player-name">'
-								+ data.whitelist[i].name
-								+ '	</div>'
-								+ '</div>';
-					}
-					$('.players').html(content);
-				}
-			});
-*/?>
+		$('.player-head img').click(function() {
+			toggleHat($(this));
+		});
 
+		function toggleHat(head) {
+			var src = head.attr('src');
+			if (src.indexOf('&hat=0') == -1)
+				src += '&hat=0';
+			else
+				src = src.replace('&hat=0','');
 
-
+			head.attr('src', src);
+		}
 
 		</script>
 
