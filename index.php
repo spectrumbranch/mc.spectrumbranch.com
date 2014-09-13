@@ -27,8 +27,8 @@
 				<h1>Apocalypse Server Whitelist</h1>
 
 				<div class="players">
-					<?php
 
+					<?php 
 					$data = array("apikey" => $config['apikey']);
 					$data_string = json_encode($data);
 
@@ -40,24 +40,43 @@
 						'Content-Type: application/json',
 						'Content-Length: ' . strlen($data_string))
 					);
-					
 					$curl_result = curl_exec($ch);
-
 					$result = json_decode($curl_result);
 
+					// Loop through each player
 					foreach ($result->whitelist as $player) {
+						$uuid = str_replace('-','',$player->uuid);
+
+						$data = array(
+							"apikey" => $config['apikey'],
+							"uuid" => $uuid
+						);
+						$data_string = json_encode($data);
+						$ch = curl_init('mc.spectrumbranch.com:8123/apoc_minecraft/skin.json');
+						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+						curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+							'Content-Type: application/json',
+							'Content-Length: ' . strlen($data_string))
+						);
+						$curl_result2 = curl_exec($ch);
+						$result2 = json_decode($curl_result2);
+
+						$texture = isset($result2->skin) ? urlencode($result2->skin) : 'none';
 					?>
 
 					<div class="player">
-						<div class="player-head">
-							<img src="https://minotar.net/helm/<?=$player->name?>/100.png" alt=""/>
+						<div class="player-head-container">
+							<img src="playerhead.php?texture=<?=$texture?>&size=100" alt=""/>
 						</div>
 						<div class="player-name">
-							<?=$player->name?>
+							<?=$player->name?><br/>
 						</div>
 					</div>
 
 					<?php } ?>
+
 				</div>
 
 			</div>
@@ -69,28 +88,19 @@
 
 		<script type="text/javascript">
 
-<?php /*
-			$.ajax({
-				url : "http://mc.spectrumbranch.com:8123/apoc_minecraft/whitelist.json",
-				type: "POST",
-				data : {apikey: "<?=$config['apikey']?>"},
-				success: function(data)
-				{
-					var content = '';
-					for (var i=0;i<data.whitelist.length;i++) {
-						content += '<div class="player">'
-								+ '	<div class="player-head">'
-								+ '		<img src="https://minotar.net/helm/' + data.whitelist[i].name + '/100.png" alt=""/>'
-								+ '	</div>'
-								+ '	<div class="player-name">'
-								+ data.whitelist[i].name
-								+ '	</div>'
-								+ '</div>';
-					}
-					$('.players').html(content);
-				}
-			});
-*/?>
+		$('.player-head img').click(function() {
+			toggleHat($(this));
+		});
+
+		function toggleHat(head) {
+			var src = head.attr('src');
+			if (src.indexOf('&hat=0') == -1)
+				src += '&hat=0';
+			else
+				src = src.replace('&hat=0','');
+
+			head.attr('src', src);
+		}
 
 		</script>
 
