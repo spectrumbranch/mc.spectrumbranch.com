@@ -68,7 +68,8 @@
 
 					<div class="player">
 						<div class="player-head-container">
-							<img src="playerhead.php?texture=<?=$texture?>&size=100" alt=""/>
+							<img class="player-head" src="playerskin.php?texture=<?=$texture?>&size=100&hat=0" alt=""/>
+							<img class="player-hat" src="playerskin.php?texture=<?=$texture?>&size=100&hat=1" alt=""/>
 						</div>
 						<div class="player-name">
 							<?=$player->name?><br/>
@@ -88,19 +89,9 @@
 
 		<script type="text/javascript">
 
-		$('.player-head img').click(function() {
-			toggleHat($(this));
-		});
-
-		function toggleHat(head) {
-			var src = head.attr('src');
-			if (src.indexOf('&hat=0') == -1)
-				src += '&hat=0';
-			else
-				src = src.replace('&hat=0','');
-
-			head.attr('src', src);
-		}
+		// $('.player-head-container').click(function() {
+		// 	$(this).find('.player-hat').fadeToggle(200);
+		// });
 
 		</script>
 
