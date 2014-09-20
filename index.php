@@ -1,4 +1,7 @@
-<?php include('config.php') ?>
+<?php
+	include('config.php');
+	include('utils.php');
+?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie10 lt-ie9 lt-ie8"> <![endif]-->
@@ -8,7 +11,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>Apocalypse Server Whitelist</title>
+		<title>Apocalypse Server</title>
 		<meta name="description" content="">
 		<meta name="keywords" content="">
 		
@@ -24,60 +27,82 @@
 		<div class="wrapper">
 			<div class="container">
 
-				<h1>Apocalypse Server Whitelist</h1>
+				<h1>Apocalypse Server</h1>
 
-				<div class="players">
+				<?php
+					$current_players = [];
 
-					<?php 
-					$data = array("apikey" => $config['apikey']);
-					$data_string = json_encode($data);
+					include_once 'serverstatus.php';
+					$status = new MinecraftServerStatus();
+					$response = $status->getStatus('mc.spectrumbranch.com');
 
-					$ch = curl_init('mc.spectrumbranch.com:8123/apoc_minecraft/whitelist.json');
-					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-					curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-						'Content-Type: application/json',
-						'Content-Length: ' . strlen($data_string))
+					if(!$response) {
+						//echo "The Server is offline!";
+					} else {
+						//echo 'The Server ' . $response['hostname'] . ' is running on ' . $response['version'] . ' and is online.<br/>';
+						//echo 'There are currently ' . $response['players'] . '/' . $response['maxplayers'] . ' players online.<br/>';
+
+						foreach ($response['playerlist'] as $player) {
+							$current_players[] = str_replace('-','',$player->id);
+						}
+					}
+
+					// ** TODO: REMOVE THIS TEST DATA LATER **
+					// $result = call_url('1','');
+
+					$result = call_url(
+						'mc.spectrumbranch.com:8123/apoc_minecraft/whitelist.json',
+						["apikey" => $config['apikey']]
 					);
-					$curl_result = curl_exec($ch);
-					$result = json_decode($curl_result);
 
-					// Loop through each player
+					$online_players = [];
+					$offline_players = [];
 					foreach ($result->whitelist as $player) {
-						$uuid = str_replace('-','',$player->uuid);
+						$player->uuid = str_replace('-','',$player->uuid); //Get rid of hyphens
+						if (in_array($player->uuid, $current_players))
+							$online_players[] = $player;
+						else
+							$offline_players[] = $player;
+					}
+				?>
 
-						$data = array(
-							"apikey" => $config['apikey'],
-							"uuid" => $uuid
-						);
-						$data_string = json_encode($data);
-						$ch = curl_init('mc.spectrumbranch.com:8123/apoc_minecraft/skin.json');
-						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-						curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-							'Content-Type: application/json',
-							'Content-Length: ' . strlen($data_string))
-						);
-						$curl_result2 = curl_exec($ch);
-						$result2 = json_decode($curl_result2);
+				<div class="players online-players">
+					<h3>Online Players (<?=$response['players']?>/<?=$response['maxplayers']?>)</h3>
 
-						$texture = isset($result2->skin) ? urlencode($result2->skin) : 'none';
-					?>
+					<?php if (count($online_players) > 0) : ?>
+						<?php foreach ($online_players as $player) : ?>
+							<div class="player" data-uuid="<?=$player->uuid?>" data-size="100">
+								<div class="player-head-container">
+									<img class="loader" src="img/loader.gif" alt=""/>
+								</div>
+								<div class="player-name">
+									<?=$player->name?><br/>
+								</div>
+							</div>
+						<?php endforeach ?>
+					<?php else : ?>
+						<p>
+							There are no players currently online.
+						</p>
+					<?php endif ?>
+				
+				</div><!-- players -->
 
-					<div class="player">
-						<div class="player-head-container">
-							<img src="playerhead.php?texture=<?=$texture?>&size=100" alt=""/>
+				<div class="players offline-players">
+					<h4>Offline Players</h4>
+
+					<?php foreach ($offline_players as $player) : ?>
+						<div class="player" data-uuid="<?=$player->uuid?>" data-size="50">
+							<div class="player-head-container">
+								<img class="loader" src="img/loader.gif" alt=""/>
+							</div>
+							<div class="player-name">
+								<?=$player->name?><br/>
+							</div>
 						</div>
-						<div class="player-name">
-							<?=$player->name?><br/>
-						</div>
-					</div>
+					<?php endforeach ?>
 
-					<?php } ?>
-
-				</div>
+				</div><!-- players -->
 
 			</div>
 		</div>
@@ -88,20 +113,20 @@
 
 		<script type="text/javascript">
 
-		$('.player-head img').click(function() {
-			toggleHat($(this));
+		$(document).ready(function() {
+
+			$('.player').each(function() {
+				var player = $(this);
+				var img = $("<img />").attr('src', 'playerhead.php?uuid=' + player.data("uuid") + '&size=' + player.data("size") + '&hat=1').addClass('player-head')
+					.load(function() {
+						if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+							console.log('Broken image: ' + player.data("uuid"));
+						} else {
+							player.find('.player-head-container').html(img);
+						}
+					});
+			});
 		});
-
-		function toggleHat(head) {
-			var src = head.attr('src');
-			if (src.indexOf('&hat=0') == -1)
-				src += '&hat=0';
-			else
-				src = src.replace('&hat=0','');
-
-			head.attr('src', src);
-		}
-
 		</script>
 
 	</body>

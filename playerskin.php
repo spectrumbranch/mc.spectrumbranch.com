@@ -1,4 +1,4 @@
-<?php 
+<?php
 	include('config.php');
 	include('utils.php');
 
@@ -36,8 +36,8 @@
 
 	$ratio = $size / $part_width;
 
-	$new_width = $part_width * $ratio;
-	$new_height = $part_height * $ratio;
+	$new_width = $old_width * $ratio;
+	$new_height = $old_height * $ratio;
 
 	// Create a "canvas" for the resized image to fit into
 	$resized = imagecreatetruecolor($new_width, $new_height);
@@ -51,10 +51,12 @@
 	//Keep trnsparent when saving
 	imagesavealpha($resized, true);
 
-	// Resize original image and combine into resized canvas. Head first, then mask.
-	imagecopyresized($resized, $image, 0, 0, $part_x, $part_y, $old_width * $ratio, $old_height * $ratio, $old_width, $old_height);
-	if ($hat && !$oldskin)
-		imagecopyresized($resized, $image, 0, 0, $part_x2, $part_y, $old_width * $ratio, $old_height * $ratio, $old_width, $old_height);
+	//imagecopyresized ( resource $dst_image , resource $src_image ,
+	// int $dst_x , int $dst_y , int $src_x , int $src_y ,
+	// int $dst_w , int $dst_h , int $src_w , int $src_h )
+
+	if (!$hat || !$oldskin)
+		imagecopyresized($resized, $image, 0, 0, 0, 0, $old_width * $ratio, $old_height * $ratio, $old_width, $old_height);
 
 	// Output resized image to page
 	header('Content-type: image/png');
