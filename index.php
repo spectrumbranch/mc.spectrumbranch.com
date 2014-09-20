@@ -14,7 +14,14 @@
 		<title>Apocalypse Server</title>
 		<meta name="description" content="">
 		<meta name="keywords" content="">
-		
+
+		<meta property="og:title" content="Apocalypse Server" />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="http://mc.spectrumbranch.com/" />
+		<meta property="og:site_name" content="catnips" />
+		<meta property="og:image" content="http://mc.spectrumbranch.com/img/egg.png" />
+		<meta property="og:description" content="See who's whitelisted, who's online, and more!" />
+
 		<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
 		<link rel="stylesheet" href="<?=($fn='css/main.css').'?v='.filemtime($fn)?>">
