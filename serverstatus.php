@@ -62,8 +62,8 @@
 				return false;
 			}
 
-			// TEST DATA ** TODO: REMOVE THIS LATER **
-			$data = '{"description":"No rules apocalypse mode, eat thai food","players":{"max":24,"online":1,"sample":[{"id":"9f87456a-6e6c-4eec-adb7-7b7cc5e44065","name":"Harrydg"}]},"version":{"name":"1.8","protocol":47}}';
+			// ** TODO: REMOVE THIS TEST DATA LATER **
+			// $data = '{"description":"No rules apocalypse mode, eat thai food","players":{"max":24,"online":1,"sample":[{"id":"9f87456a-6e6c-4eec-adb7-7b7cc5e44065","name":"Harrydg"}]},"version":{"name":"1.8","protocol":47}}';
 
 			$data = json_decode($data);
 

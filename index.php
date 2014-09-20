@@ -11,7 +11,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>Apocalypse Server Whitelist</title>
+		<title>Apocalypse Server</title>
 		<meta name="description" content="">
 		<meta name="keywords" content="">
 		
@@ -27,7 +27,7 @@
 		<div class="wrapper">
 			<div class="container">
 
-				<h1>Apocalypse Server Whitelist</h1>
+				<h1>Apocalypse Server</h1>
 
 				<?php
 					$current_players = [];
@@ -35,23 +35,21 @@
 					include_once 'serverstatus.php';
 					$status = new MinecraftServerStatus();
 					$response = $status->getStatus('mc.spectrumbranch.com');
+
 					if(!$response) {
-						echo"The Server is offline!";
+						//echo "The Server is offline!";
 					} else {
-						echo 'The Server ' . $response['hostname'] . ' is running on ' . $response['version'] . ' and is online.<br/>';
-						echo 'There are currently ' . $response['players'] . '/' . $response['maxplayers'] . ' players online.<br/>';
+						//echo 'The Server ' . $response['hostname'] . ' is running on ' . $response['version'] . ' and is online.<br/>';
+						//echo 'There are currently ' . $response['players'] . '/' . $response['maxplayers'] . ' players online.<br/>';
 
 						foreach ($response['playerlist'] as $player) {
-							$current_players[] = $player->id;
+							$current_players[] = str_replace('-','',$player->id);
 						}
 					}
 
-				?>
+					// ** TODO: REMOVE THIS TEST DATA LATER **
+					// $result = call_url('1','');
 
-
-				<div class="players">
-
-					<?php 
 					$result = call_url(
 						'mc.spectrumbranch.com:8123/apoc_minecraft/whitelist.json',
 						["apikey" => $config['apikey']]
@@ -60,52 +58,51 @@
 					$online_players = [];
 					$offline_players = [];
 					foreach ($result->whitelist as $player) {
+						$player->uuid = str_replace('-','',$player->uuid); //Get rid of hyphens
 						if (in_array($player->uuid, $current_players))
 							$online_players[] = $player;
 						else
 							$offline_players[] = $player;
 					}
+				?>
 
-					function displayPlayer($player, $apikey) {
-						$uuid = str_replace('-','',$player->uuid);
+				<div class="players online-players">
+					<h3>Online Players (<?=$response['players']?>/<?=$response['maxplayers']?>)</h3>
 
-						$result2 = call_url(
-							'mc.spectrumbranch.com:8123/apoc_minecraft/skin.json',
-							[
-								"apikey" => $apikey,
-								"uuid" => $uuid
-							]
-						);
+					<?php if (count($online_players) > 0) : ?>
+						<?php foreach ($online_players as $player) : ?>
+							<div class="player" data-uuid="<?=$player->uuid?>" data-size="100">
+								<div class="player-head-container">
+									<img class="loader" src="img/loader.gif" alt=""/>
+								</div>
+								<div class="player-name">
+									<?=$player->name?><br/>
+								</div>
+							</div>
+						<?php endforeach ?>
+					<?php else : ?>
+						<p>
+							There are no players currently online.
+						</p>
+					<?php endif ?>
+				
+				</div><!-- players -->
 
-						$texture = isset($result2->skin) ? urlencode($result2->skin) : 'none';
-					?>
+				<div class="players offline-players">
+					<h4>Offline Players</h4>
 
-					<div class="player">
-						<div class="player-head-container">
-							<img class="player-head" src="playerskin.php?texture=<?=$texture?>&size=100&hat=0" alt=""/>
-							<img class="player-hat" src="playerskin.php?texture=<?=$texture?>&size=100&hat=1" alt=""/>
+					<?php foreach ($offline_players as $player) : ?>
+						<div class="player" data-uuid="<?=$player->uuid?>" data-size="50">
+							<div class="player-head-container">
+								<img class="loader" src="img/loader.gif" alt=""/>
+							</div>
+							<div class="player-name">
+								<?=$player->name?><br/>
+							</div>
 						</div>
-						<div class="player-name">
-							<?=$player->name?><br/>
-						</div>
-					</div>
+					<?php endforeach ?>
 
-					<?php } 
-
-					// Loop through each ONLINE player
-					foreach ($online_players as $player) {
-						displayPlayer($player, $config['apikey']);
-					} ?>
-
-					<hr/>
-
-					<?php 
-					// Loop through each OFFLINE player
-					foreach ($offline_players as $player) {
-						displayPlayer($player, $config['apikey']);
-					} ?>
-
-				</div>
+				</div><!-- players -->
 
 			</div>
 		</div>
@@ -116,10 +113,20 @@
 
 		<script type="text/javascript">
 
-		// $('.player-head-container').click(function() {
-		// 	$(this).find('.player-hat').fadeToggle(200);
-		// });
+		$(document).ready(function() {
 
+			$('.player').each(function() {
+				var player = $(this);
+				var img = $("<img />").attr('src', 'playerhead.php?uuid=' + player.data("uuid") + '&size=' + player.data("size") + '&hat=1').addClass('player-head')
+					.load(function() {
+						if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+							console.log('Broken image: ' + player.data("uuid"));
+						} else {
+							player.find('.player-head-container').html(img);
+						}
+					});
+			});
+		});
 		</script>
 
 	</body>
