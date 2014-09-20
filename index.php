@@ -1,4 +1,7 @@
-<?php include('config.php') ?>
+<?php
+	include('config.php');
+	include('utils.php');
+?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie10 lt-ie9 lt-ie8"> <![endif]-->
@@ -26,42 +29,53 @@
 
 				<h1>Apocalypse Server Whitelist</h1>
 
+				<?php
+					$current_players = [];
+
+					include_once 'serverstatus.php';
+					$status = new MinecraftServerStatus();
+					$response = $status->getStatus('mc.spectrumbranch.com');
+					if(!$response) {
+						echo"The Server is offline!";
+					} else {
+						echo 'The Server ' . $response['hostname'] . ' is running on ' . $response['version'] . ' and is online.<br/>';
+						echo 'There are currently ' . $response['players'] . '/' . $response['maxplayers'] . ' players online.<br/>';
+
+						foreach ($response['playerlist'] as $player) {
+							$current_players[] = $player->id;
+						}
+					}
+
+				?>
+
+
 				<div class="players">
 
 					<?php 
-					$data = array("apikey" => $config['apikey']);
-					$data_string = json_encode($data);
-
-					$ch = curl_init('mc.spectrumbranch.com:8123/apoc_minecraft/whitelist.json');
-					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-					curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-						'Content-Type: application/json',
-						'Content-Length: ' . strlen($data_string))
+					$result = call_url(
+						'mc.spectrumbranch.com:8123/apoc_minecraft/whitelist.json',
+						["apikey" => $config['apikey']]
 					);
-					$curl_result = curl_exec($ch);
-					$result = json_decode($curl_result);
 
-					// Loop through each player
+					$online_players = [];
+					$offline_players = [];
 					foreach ($result->whitelist as $player) {
+						if (in_array($player->uuid, $current_players))
+							$online_players[] = $player;
+						else
+							$offline_players[] = $player;
+					}
+
+					function displayPlayer($player, $apikey) {
 						$uuid = str_replace('-','',$player->uuid);
 
-						$data = array(
-							"apikey" => $config['apikey'],
-							"uuid" => $uuid
+						$result2 = call_url(
+							'mc.spectrumbranch.com:8123/apoc_minecraft/skin.json',
+							[
+								"apikey" => $apikey,
+								"uuid" => $uuid
+							]
 						);
-						$data_string = json_encode($data);
-						$ch = curl_init('mc.spectrumbranch.com:8123/apoc_minecraft/skin.json');
-						curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-						curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-							'Content-Type: application/json',
-							'Content-Length: ' . strlen($data_string))
-						);
-						$curl_result2 = curl_exec($ch);
-						$result2 = json_decode($curl_result2);
 
 						$texture = isset($result2->skin) ? urlencode($result2->skin) : 'none';
 					?>
@@ -76,7 +90,20 @@
 						</div>
 					</div>
 
-					<?php } ?>
+					<?php } 
+
+					// Loop through each ONLINE player
+					foreach ($online_players as $player) {
+						displayPlayer($player, $config['apikey']);
+					} ?>
+
+					<hr/>
+
+					<?php 
+					// Loop through each OFFLINE player
+					foreach ($offline_players as $player) {
+						displayPlayer($player, $config['apikey']);
+					} ?>
 
 				</div>
 
