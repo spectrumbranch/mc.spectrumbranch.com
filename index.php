@@ -30,7 +30,7 @@
 				<h1>Apocalypse Server</h1>
 
 				<?php
-					$current_players = [];
+					$current_players = array();
 
 					include_once 'serverstatus.php';
 					$status = new MinecraftServerStatus();
@@ -43,7 +43,7 @@
 						//echo 'There are currently ' . $response['players'] . '/' . $response['maxplayers'] . ' players online.<br/>';
 
 						foreach ($response['playerlist'] as $player) {
-							$current_players[] = str_replace('-','',$player->id);
+							array_push($current_players, str_replace('-','',$player->id));
 						}
 					}
 
@@ -52,17 +52,17 @@
 
 					$result = call_url(
 						'mc.spectrumbranch.com:8123/apoc_minecraft/whitelist.json',
-						["apikey" => $config['apikey']]
+						array("apikey" => $config['apikey'])
 					);
 
-					$online_players = [];
-					$offline_players = [];
+					$online_players = array();
+					$offline_players = array();
 					foreach ($result->whitelist as $player) {
 						$player->uuid = str_replace('-','',$player->uuid); //Get rid of hyphens
 						if (in_array($player->uuid, $current_players))
-							$online_players[] = $player;
+							array_push($online_players, $player);
 						else
-							$offline_players[] = $player;
+							array_push($offline_players, $player);
 					}
 				?>
 
