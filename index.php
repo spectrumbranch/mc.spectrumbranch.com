@@ -22,6 +22,8 @@
 		<meta property="og:image" content="http://mc.spectrumbranch.com/img/egg.png" />
 		<meta property="og:description" content="See who's whitelisted, who's online, and more!" />
 
+
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 		<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
 		<link rel="stylesheet" href="<?=($fn='css/main.css').'?v='.filemtime($fn)?>">
