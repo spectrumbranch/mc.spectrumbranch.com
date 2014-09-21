@@ -22,6 +22,7 @@
 		<meta property="og:image" content="http://mc.spectrumbranch.com/img/egg.png" />
 		<meta property="og:description" content="See who's whitelisted, who's online, and more!" />
 
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 		<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
 		<link rel="stylesheet" href="<?=($fn='css/main.css').'?v='.filemtime($fn)?>">
@@ -44,7 +45,7 @@
 					$response = $status->getStatus('mc.spectrumbranch.com');
 
 					if(!$response) {
-						//echo "The Server is offline!";
+						echo "<span style=\"color: red; font-weight: bold;\">The Server is offline!</span>";
 					} else {
 						//echo 'The Server ' . $response['hostname'] . ' is running on ' . $response['version'] . ' and is online.<br/>';
 						//echo 'There are currently ' . $response['players'] . '/' . $response['maxplayers'] . ' players online.<br/>';
@@ -64,12 +65,14 @@
 
 					$online_players = array();
 					$offline_players = array();
-					foreach ($result->whitelist as $player) {
-						$player->uuid = str_replace('-','',$player->uuid); //Get rid of hyphens
-						if (in_array($player->uuid, $current_players))
-							array_push($online_players, $player);
-						else
-							array_push($offline_players, $player);
+					if (isset($result) && isset($result->whitelist)) {
+						foreach ($result->whitelist as $player) {
+							$player->uuid = str_replace('-','',$player->uuid); //Get rid of hyphens
+							if (in_array($player->uuid, $current_players))
+								array_push($online_players, $player);
+							else
+								array_push($offline_players, $player);
+						}
 					}
 				?>
 
@@ -120,18 +123,54 @@
 
 		<script type="text/javascript">
 
+		function lazyLoadImage(src, imgclass, successCallback) {
+			var img = $("<img />").attr('src', src).addClass(imgclass)
+				.load(function() {
+					if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
+						console.log('Broken image');
+					} else {
+						successCallback(img);
+					}
+				});
+		}
+
 		$(document).ready(function() {
 
 			$('.player').each(function() {
 				var player = $(this);
-				var img = $("<img />").attr('src', 'playerhead.php?uuid=' + player.data("uuid") + '&size=' + player.data("size") + '&hat=1').addClass('player-head')
-					.load(function() {
-						if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
-							console.log('Broken image: ' + player.data("uuid"));
-						} else {
-							player.find('.player-head-container').html(img);
+
+				$.ajax({
+					url: "get-texture.php",
+					type: 'GET',
+					data: {uuid: player.data("uuid")},
+					dataType: 'json',
+					success: function(data) {
+						var player_head_container = player.find('.player-head-container');
+						var encoded_texture = encodeURIComponent(data.texture);
+						lazyLoadImage(
+							'playerskin.php?texture=' + encoded_texture + '&size=' + player.data("size"),
+							'player-head',
+							function(img){
+								player_head_container.find('.loader').remove();
+								player_head_container.prepend(img);
+							}
+						);
+
+						// No hats for old skins
+						if (!data.oldskin) {
+							lazyLoadImage(
+								'playerskin.php?texture=' + encoded_texture + '&size=' + player.data("size"),
+								'player-hat',
+								function(img){
+									player_head_container.find('.loader').remove();
+									player_head_container.append(img);
+								}
+							);
 						}
-					});
+
+					}
+				});
+
 			});
 		});
 		</script>
