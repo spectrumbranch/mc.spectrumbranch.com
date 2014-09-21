@@ -63,7 +63,7 @@
 			}
 
 			// ** TODO: REMOVE THIS TEST DATA LATER **
-			// $data = '{"description":"No rules apocalypse mode, eat thai food","players":{"max":24,"online":1,"sample":[{"id":"9f87456a-6e6c-4eec-adb7-7b7cc5e44065","name":"Harrydg"}]},"version":{"name":"1.8","protocol":47}}';
+			// $data = '{"description":"No rules apocalypse mode, eat thai food","players":{"max":24,"online":1,"sample":[{"id":"f32d1dad-c9d4-455d-8e8e-0439f03c2ebd","name":"MGZero"}]},"version":{"name":"1.8","protocol":47}}';
 
 			$data = json_decode($data);
 
@@ -80,7 +80,7 @@
 			$serverdata['motd_raw'] = $data->description;
 			$serverdata['favicon'] = isset($data->favicon) ? $data->favicon : false;
 			$serverdata['ping'] = '$ping';
-			$serverdata['playerlist'] = $data->players->sample;
+			$serverdata['playerlist'] = isset($data->players->sample) ? $data->players->sample : array();
 
 			$this->disconnect($socket);
 

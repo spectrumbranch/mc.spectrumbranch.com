@@ -1,27 +1,10 @@
 <?php
-	include('config.php');
-	include('utils.php');
-
 	// Get params
-	$uuid = isset($_GET['uuid']) ? $_GET['uuid'] : $_GET['uuid'] ;
-
-	$result = call_url(
-		'mc.spectrumbranch.com:8123/apoc_minecraft/skin.json',
-		array(
-			"apikey" => $config['apikey'],
-			"uuid" => $uuid
-		)
-	);
-
-	$texture = isset($result->skin) ? $result->skin : 'img/char.png';
+	$texture = urldecode($_GET['texture']);
 	$size = isset($_GET['size']) ? $_GET['size'] : 64;
-	$hat = isset($_GET['hat']) ? $_GET['hat'] != false : true; // default to true
 
 	// Grab original image
 	$image = imagecreatefrompng($texture);
-
-	// Detect if the skin does not have any transparency (old style)
-	$oldskin = !check_transparent($image);
 
 	//get old width and height
 	$old_width = 64;
@@ -29,7 +12,7 @@
 
 	// Head location
 	$part_x = 8; // head
-	$part_x2 = 40; // mask
+	$part_x2 = 40; // hat
 	$part_y = 8;
 	$part_width = 8;
 	$part_height = 8;
@@ -55,8 +38,7 @@
 	// int $dst_x , int $dst_y , int $src_x , int $src_y ,
 	// int $dst_w , int $dst_h , int $src_w , int $src_h )
 
-	if (!$hat || !$oldskin)
-		imagecopyresized($resized, $image, 0, 0, 0, 0, $old_width * $ratio, $old_height * $ratio, $old_width, $old_height);
+	imagecopyresized($resized, $image, 0, 0, 0, 0, $old_width * $ratio, $old_height * $ratio, $old_width, $old_height);
 
 	// Output resized image to page
 	header('Content-type: image/png');
