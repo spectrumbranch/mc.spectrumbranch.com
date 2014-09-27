@@ -28,6 +28,8 @@
 			);
 		}
 
+		sort($online_players);
+
 		$num_current_players = $response['players'];
 		$num_max_players = $response['maxplayers'];
 	}
