@@ -33,4 +33,26 @@
 		$curl_result = curl_exec($ch);
 		return json_decode($curl_result);
 	}
+
+	function filemtime_remote($url) {
+		date_default_timezone_set('America/New_York');
+
+		$result = false;
+
+		$curl = curl_init($url);
+		curl_setopt($curl, CURLOPT_NOBODY, true);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_FILETIME, true);
+
+		$result = curl_exec($curl);
+		if ($result === false) {
+			die (curl_error($curl));
+		}
+		$timestamp = curl_getinfo($curl, CURLINFO_FILETIME);
+		if ($timestamp != -1) { //otherwise unknown
+			$result = date("Y-m-d H:i", $timestamp) . ' ET'; //etc
+		}
+
+		return $result;
+	}
 ?>
