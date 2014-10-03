@@ -48,6 +48,8 @@
 					$contents = stream_get_contents($handle);
 					fclose($handle);
 					$whitelist = isset($contents) && !is_null($contents) ? json_decode($contents) : (object) array();
+
+					$showkdr = false;
 				?>
 
 				<?php include('../inc/player-list.php') ?>

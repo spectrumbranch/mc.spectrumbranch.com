@@ -2,8 +2,9 @@
 
 	Expects the following:
 
-	$response; // Result from serverstatus.php
-	$whitelist // Result from reading from a whitelist.json
+	$response;	// Result from serverstatus.php
+	$whitelist	// Result from reading from a whitelist.json
+	$showkdr	// boolean variable for showing kills and deaths
 
 */ 
 	
@@ -51,8 +52,14 @@
 					<img class="loader" src="img/loader.gif" alt=""/>
 				</div>
 				<div class="player-name">
-					<?=$player->name?><br/>
+					<?=$player->name?>
 				</div>
+				<?php if ($showkdr) : ?>
+				<div class="player-kdr">
+					<span class="kills">0</span> kills<br/>
+					<span class="deaths">0</span> deaths
+				</div>
+				<?php endif ?>
 			</div>
 		<?php endforeach ?>
 	<?php else : ?>
@@ -72,8 +79,14 @@
 				<img class="loader" src="img/loader.gif" alt=""/>
 			</div>
 			<div class="player-name">
-				<?=$player->name?><br/>
+				<?=$player->name?>
 			</div>
+			<?php if ($showkdr) : ?>
+			<div class="player-kdr">
+				<span class="kills">0</span> kills<br/>
+				<span class="deaths">0</span> deaths
+			</div>
+			<?php endif ?>
 		</div>
 	<?php endforeach ?>
 

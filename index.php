@@ -50,9 +50,15 @@
 						array("apikey" => $config['apikey'])
 					);
 					$whitelist = isset($result) && isset($result->whitelist) ? $result->whitelist : (object) array();
+
+					$showkdr = true;
 				?>
 
 				<?php include('inc/player-list.php') ?>
+
+				<div class="whitelist-note">
+					NOTE: Kill/death count feature is still in development and may not be 100% accurate.
+				</div>
 
 			</div>
 		</div>
@@ -63,6 +69,25 @@
 
 		<script type="text/javascript">
 			$('title').html($('title').html()+" (<?=$num_current_players.'/'.$num_max_players?>)");
+
+			$.ajax({
+				url : "get-kdr.php",
+				type: "POST",
+				success: function(data) {
+					data = JSON.parse(data);
+					$('.player').each(function() {
+						var name = $(this).find('.player-name').html().trim();
+						if (data[name] !== undefined) {
+							if (data[name].kill !== undefined)
+								$(this).find('.player-kdr .kills').html(data[name].kill);
+							if (data[name].death !== undefined)
+								$(this).find('.player-kdr .deaths').html(data[name].death);
+							$(this).find('.player-kdr').addClass('visible');
+						}
+					});
+				}
+			});
+
 		</script>
 
 	</body>
