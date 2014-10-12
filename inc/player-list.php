@@ -73,11 +73,11 @@
 <div class="players offline-players">
 	<h4>Offline Players (<?= count($offline_players).'/'.(count($online_players)+count($offline_players))?>)</h4>
 
-	<?php foreach ($offline_players as $player) : ?>
-		<div class="player" data-uuid="<?=$player->uuid?>" data-size="50">
-			<div class="player-head-container">
-				<img class="loader" src="img/loader.gif" alt=""/>
-			</div>
+	<?php foreach ($offline_players as $player) : ?><div class="player" data-uuid="<?=$player->uuid?>" data-size="50">
+		<div class="player-head-container">
+			<img class="loader" src="img/loader.gif" alt=""/>
+		</div>
+		<div class="player-info">
 			<div class="player-name">
 				<?=$player->name?>
 			</div>
@@ -88,6 +88,6 @@
 			</div>
 			<?php endif ?>
 		</div>
-	<?php endforeach ?>
+	</div><?php endforeach ?>
 
 </div><!-- players -->

@@ -34,7 +34,7 @@
 		return json_decode($curl_result);
 	}
 
-	function filemtime_remote($url) {
+	function filemtime_remote($url, $format = null) {
 		date_default_timezone_set('America/New_York');
 
 		$result = false;
@@ -50,7 +50,10 @@
 		}
 		$timestamp = curl_getinfo($curl, CURLINFO_FILETIME);
 		if ($timestamp != -1) { //otherwise unknown
-			$result = date("Y-m-d H:i", $timestamp) . ' ET'; //etc
+			if (is_null($format))
+				$result = date("Y-m-d H:i", $timestamp) . ' ET'; //etc
+			else
+				$result = date($format, $timestamp);
 		}
 
 		return $result;

@@ -99,13 +99,19 @@ body {
 	z-index: 2;
 	transition: opacity 0.4s;
 }
+.player-info {
+	opacity: 0;
+	transition: opacity 0.2s;
+	&.visible {
+		opacity: 1;
+	}
+}
 .player-name {
 	margin-top: 10px;
 }
 .player-kdr {
 	font-size: 0.7em;
 	opacity: 0;
-	transition: opacity 0.2s;
 	&.visible {
 		opacity: 1;
 	}

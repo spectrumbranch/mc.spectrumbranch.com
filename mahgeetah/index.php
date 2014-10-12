@@ -69,6 +69,7 @@
 
 		<script type="text/javascript">
 			$('title').html($('title').html()+" (<?=$num_current_players.'/'.$num_max_players?>)");
+			$('.player-info').addClass('visible');
 		</script>
 
 	</body>

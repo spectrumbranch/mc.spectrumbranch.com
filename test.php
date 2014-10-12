@@ -1,6 +1,7 @@
 <?php
 	include('config.php');
 	include('utils.php');
+	date_default_timezone_set('America/New_York');
 
 	// Get params
 	$debug = isset($_GET['d']) ? true : false;
@@ -26,14 +27,27 @@
 
 					switch ($key) {
 						// case 'login':
-						// case 'logout':
 						// 	if (!isset($display[$entry->user]))
 						// 		$display[$entry->user] = array();
 						// 	if (!isset($display[$entry->user][$key]))
-						// 		$display[$entry->user][$key] = 1;
+						// 		$display[$entry->user][$key] = array(floor($entry->x).', '.floor($entry->z));
 						// 	else
-						// 		$display[$entry->user][$key] += 1;
+						// 		$display[$entry->user][$key][] = floor($entry->x).', '.floor($entry->z);
 						// 	break;
+						case 'logout':
+
+							$string_timestamp = $logfile->date.' '.$entry->time;
+
+							// $timestamp = date_create_from_format('Y-m-d H:i:s', $string_timestamp));
+
+							if (!isset($display[$entry->user]))
+								$display[$entry->user] = array();
+							// if (!isset($display[$entry->user][$key]))
+							// 	$display[$entry->user][$key] = array($string_timestamp);
+							// else
+							// 	$display[$entry->user][$key][] = $string_timestamp;
+							$display[$entry->user]['last_seen'] = $string_timestamp;
+							break;
 						case 'kill':
 							if (!isset($display[$entry->target]))
 								$display[$entry->target] = array();

@@ -57,7 +57,8 @@
 				<?php include('inc/player-list.php') ?>
 
 				<div class="whitelist-note">
-					NOTE: Kill/death count feature is still in development and may not be 100% accurate.
+					NOTE: Kill count does not include kills on suiciding players.<br/>
+					NOTE 2: Hover over a players head to see when they were last online!
 				</div>
 
 			</div>
@@ -71,7 +72,7 @@
 			$('title').html($('title').html()+" (<?=$num_current_players.'/'.$num_max_players?>)");
 
 			$.ajax({
-				url : "get-kdr.php",
+				url : "get-player-info.php",
 				type: "POST",
 				success: function(data) {
 					data = JSON.parse(data);
@@ -82,12 +83,26 @@
 								$(this).find('.player-kdr .kills').html(data[name].kill);
 							if (data[name].death !== undefined)
 								$(this).find('.player-kdr .deaths').html(data[name].death);
+							if (data[name].last_seen !== undefined)
+								$(this).attr('data-lastseen',data[name].last_seen).find('.player-head-container').attr('title', 'Last seen: ' + data[name].last_seen);
 							$(this).find('.player-kdr').addClass('visible');
+						} else {
+							$(this).attr('data-lastseen','1970-01-01 00:00:00');
+							$(this).find('.player-head-container').attr('title', 'Last seen: Never');
 						}
 					});
+
+					$(".offline-players .player").sort(sort_players).appendTo('.offline-players');
+					$(".online-players .player-head-container").attr('title', 'Last seen: Online now!');
+					setTimeout(function() {
+						$('.player-info').addClass('visible');
+					}, 100);
 				}
 			});
 
+			function sort_players(a, b){
+				return ($(b).data('lastseen')) > ($(a).data('lastseen')) ? 1 : -1;    
+			}
 		</script>
 
 	</body>

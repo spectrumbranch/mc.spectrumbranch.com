@@ -16,6 +16,11 @@
 				foreach ($type as $entry) {
 
 					switch ($key) {
+						case 'logout':
+							if (!isset($display[$entry->user]))
+								$display[$entry->user] = array();
+							$display[$entry->user]['last_seen'] = $logfile->date.' '.$entry->time;
+							break;
 						case 'kill':
 							if (!isset($display[$entry->target]))
 								$display[$entry->target] = array();
