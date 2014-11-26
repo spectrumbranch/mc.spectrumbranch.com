@@ -1,7 +1,8 @@
 <?php
 
 	$config = array(
-		'apikey' => '',
+		'apikey'	=> '',
+		'world'		=> '',
 	);
 
 ?>

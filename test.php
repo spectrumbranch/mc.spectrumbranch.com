@@ -7,7 +7,7 @@
 	$debug = isset($_GET['d']) ? true : false;
 
 	$result = call_url(
-		'mc.spectrumbranch.com:8123/apoc_minecraft/parsedLogs.json',
+		'mc.spectrumbranch.com:8123/' . $config['world'] . '/parsedLogs.json',
 		array(
 			"apikey" => $config['apikey']
 		)

@@ -11,11 +11,11 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>Apocalypse Server</title>
+		<title>FTB Server</title>
 		<meta name="description" content="">
 		<meta name="keywords" content="">
 
-		<meta property="og:title" content="Apocalypse Server" />
+		<meta property="og:title" content="FTB Server" />
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="http://mc.spectrumbranch.com/" />
 		<meta property="og:site_name" content="catnips" />
@@ -36,7 +36,8 @@
 
 		<div class="wrapper">
 			<div class="container">
-
+				<br/>
+				Come join us in Feed the Beast! <a href="http://harryscheiner.com/mc/ftb/" target="_blank" style="color:#337abd;">Click here for info</a>!
 				<?php
 					include_once 'serverstatus.php';
 					$status = new MinecraftServerStatus();
@@ -46,17 +47,17 @@
 					// $result = call_url('1','');
 
 					$result = call_url(
-						'mc.spectrumbranch.com:8123/apoc_minecraft/whitelist.json',
+						'mc.spectrumbranch.com:8123/' . $config['world'] . '/whitelist.json',
 						array("apikey" => $config['apikey'])
 					);
 					$whitelist = isset($result) && isset($result->whitelist) ? $result->whitelist : (object) array();
 
-					$showkdr = true;
+					$showkdr = false;
 				?>
 
 				<?php include('inc/player-list.php') ?>
 
-				<div class="whitelist-note">
+				<div class="whitelist-note" style="display: none;">
 					NOTE: Kill count does not include kills on suiciding players.<br/>
 					NOTE 2: Hover over a players head to see when they were last online!
 				</div>
