@@ -1,15 +1,14 @@
 @import 'normalize';
 @import 'boilerplate';
 
-// Variables
+//Variables
 $site-width: 960;
 
-$screen-sm-min: 768px;
+$screen-sm-max: 40em;
 $screen-md-min: 992px;
 $screen-lg-min: 1200px;
 
-//@media (min-width: $screen-sm-min) { ... }
-//@media (min-width: $screen-md-min) { ... }
+
 //@media (min-width: $screen-lg-min) { ... }
 
 
@@ -17,9 +16,13 @@ $screen-lg-min: 1200px;
 // $color-blue: #60aff0;
 
 
+
+
+
+
 // Common
 html, body {
-    min-width: #{$site-width}px;
+    /*min-width: #{$site-width}px;*/
 }
 html {
 	background: url('../img/tile_bg.png') repeat center top;
@@ -28,9 +31,12 @@ body {
 	font-family: "Roboto", sans-serif;
 }
 .container {
-    margin: 0 auto;
-    width: #{$site-width}px;
+    /*width: #{$site-width}px;*/
     position: relative;
+    width: 66%;
+    margin-left: auto;
+	margin-right: auto;
+
 }
 
 
@@ -172,3 +178,76 @@ body {
 	line-height: 1.5em;
 	font-size: 0.9em;
 }
+
+
+@media only screen and (min-width: 40.063em) and (max-width: 64em) {
+
+
+/*div.players.offline-players{
+	width: 100%;
+	max-width: 45.5rem;
+}
+
+.container {
+	position: relative;
+    width: 66%;
+    margin-left: auto;
+	margin-right: auto;
+}
+*/
+
+
+
+
+
+
+
+
+
+
+}
+
+
+@media only screen and (max-width: 40em) {
+
+
+
+div.players.offline-players{
+	width: 100%;
+max-width: 26.3rem;
+position: relative;
+}
+
+.offline-players .player {
+width: 98px;
+margin-bottom: 30px;
+}
+
+.container {
+
+	position: relative;
+    width: 66%;
+    margin-left: auto;
+	margin-right: auto;
+
+
+}
+
+
+body {
+font-size: 14px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+ }
